@@ -17,6 +17,19 @@ public class PassiveTab : ITab
 
     private void DrawGeneral()
     {
+        // --- NEW SPOOFING SECTION ---
+        GUILayout.Label("Spoofing", GUIStylePreset.TabSubtitle);
+        
+        GUILayout.BeginHorizontal();
+        GUILayout.Label(" Fake Level: ", GUILayout.Width(100f));
+        MalumMenu.spoofLevel.Value = GUILayout.TextField(MalumMenu.spoofLevel.Value, 6, GUILayout.Width(100f));
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+        
+        // --- ORIGINAL TOGGLES ---
+        GUILayout.Label("General", GUIStylePreset.TabSubtitle);
+
         CheatToggles.freeCosmetics = GUILayout.Toggle(CheatToggles.freeCosmetics, " Free Cosmetics");
 
         CheatToggles.avoidPenalties = GUILayout.Toggle(CheatToggles.avoidPenalties, " Avoid Penalties");
