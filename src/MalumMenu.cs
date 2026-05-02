@@ -27,6 +27,7 @@ public partial class MalumMenu : BasePlugin
     public static TasksUI tasksUI;
     public static ProtectUI protectUI;
     public static KeybindListener keybindListener;
+    public static ConfigEntry<string> customMaxPlayers;
 
     public static string malumVersion = "3.1.0";
     public static List<string> supportedAU = new List<string> { "2026.3.31" };
@@ -104,6 +105,11 @@ public partial class MalumMenu : BasePlugin
                                 "Level",
                                 "",
                                 "A custom player level to display to others in online games to hide your actual platform. IMPORTANT: Custom levels can only be within 1 and 100001. Decimal numbers will not work");
+
+        customMaxPlayers = Config.Bind("MalumMenu.Host",
+                        "MaxPlayers",
+                        "15",
+                        "Custom max player count for hosted lobbies (e.g. 50)");
 
         spoofPlatform = Config.Bind("MalumMenu.Spoofing",
                                 "Platform",

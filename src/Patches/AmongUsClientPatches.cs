@@ -35,3 +35,33 @@ public static class AmongUsClient_OnGameJoined
         lastGameIdString = gameIdString;
     }
 }
+
+
+public static class InnerNetClient_HostGame_Patch
+{
+    // This intercepts the HostGame packet right before it leaves your PC
+    public static void Prefix(AmongUs.GameOptions.IGameOptions settings)
+    {
+        if (int.TryParse(MalumMenu.customMaxPlayers.Value, out int max))
+        {
+            // Override the game's UI slider with our custom value
+            settings.MaxPlayers = max;
+            MalumMenu.Log.LogInfo($"[LOBBY OVERRIDE] Hosting game with {max} Max Players!");
+        }
+    }
+}[HarmonyPatch(typeof(GameData), nameof(GameData.GetAvailableId))]
+public static class GameData_GetAvailableId_Patch
+{
+    // The Hidden Color Crash Boss:
+    // Vanilla Among Us only has 18 colors. If player 19 joins, GetAvailableId returns -1 and the game crashes.
+    // This patch says: "If we are out of colors, just start handing out random duplicate colors."
+    public static bool Prefix(ref sbyte __result)
+    {
+        if (GameData.Instance && GameData.Instance.AllPlayers.Count >= 18)
+        {
+            __result = (sbyte)UnityEngine.Random.Range(0, 18); // Assign a random color ID from 0 to 17
+            return false; // Skip the original method so it doesn't crash
+        }
+        return true; // Run normally if under 18 players
+    }
+}

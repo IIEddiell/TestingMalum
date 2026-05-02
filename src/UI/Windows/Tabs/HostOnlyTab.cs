@@ -33,8 +33,57 @@ public class HostOnlyTab : ITab
         GUILayout.EndHorizontal();
     }
 
+    private static bool _isEditingMaxPlayers = false;
+
     private void DrawGeneral()
     {
+        // --- CUSTOM MAX PLAYERS OVERRIDE ---
+        GUILayout.Label("Lobby Settings", GUIStylePreset.TabSubtitle);
+        
+        GUILayout.BeginHorizontal();
+        GUILayout.Label(" Max Players: ", GUILayout.Width(100f));
+
+        string currentMax = MalumMenu.customMaxPlayers.Value;
+
+        if (_isEditingMaxPlayers)
+        {
+            if (GUILayout.Button(currentMax + "_", GUI.skin.box, GUILayout.Width(100f)))
+            {
+                _isEditingMaxPlayers = false;
+            }
+
+            Event e = Event.current;
+            if (e.type == EventType.KeyDown)
+            {
+                if (e.keyCode == KeyCode.Return || e.keyCode == KeyCode.KeypadEnter || e.keyCode == KeyCode.Escape)
+                {
+                    _isEditingMaxPlayers = false;
+                }
+                else if (e.keyCode == KeyCode.Backspace && currentMax.Length > 0)
+                {
+                    MalumMenu.customMaxPlayers.Value = currentMax.Substring(0, currentMax.Length - 1);
+                }
+                else if (char.IsDigit(e.character) && currentMax.Length < 3) // Max 999 players!
+                {
+                    MalumMenu.customMaxPlayers.Value += e.character;
+                }
+            }
+        }
+        else
+        {
+            string displayStr = string.IsNullOrEmpty(currentMax) ? "15" : currentMax;
+            if (GUILayout.Button(displayStr, GUI.skin.box, GUILayout.Width(100f)))
+            {
+                _isEditingMaxPlayers = true;
+            }
+        }
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+
+        // --- ORIGINAL TOGGLES ---
+        GUILayout.Label("General", GUIStylePreset.TabSubtitle);
+
         CheatToggles.killVanished = GUILayout.Toggle(CheatToggles.killVanished, " Kill While Vanished");
 
         CheatToggles.killAnyone = GUILayout.Toggle(CheatToggles.killAnyone, " Kill Anyone");
@@ -42,10 +91,6 @@ public class HostOnlyTab : ITab
         CheatToggles.noKillCd = GUILayout.Toggle(CheatToggles.noKillCd, " No Kill Cooldown");
 
         CheatToggles.showProtectMenu = GUILayout.Toggle(CheatToggles.showProtectMenu, " Show Protect Menu");
-
-        // CheatToggles.forceRole = GUILayout.Toggle(CheatToggles.forceRole, " Force Role");
-
-        // CheatToggles.noOptionsLimits = GUILayout.Toggle(CheatToggles.noOptionsLimits, " No Options Limits");
     }
 
     private void DrawMurder()
